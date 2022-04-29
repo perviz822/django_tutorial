@@ -3,8 +3,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import generics ,authentication,permissions
 from product.models import Product_comments
-from product.models import Product
-from product.serializers import ProductSerializer,Product_comment_serializer
+from product.models import Product, Carpets
+from product.serializers import ProductSerializer,Product_comment_serializer, CarpetSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from product.permissions import  IsStaffMember
@@ -68,6 +68,30 @@ class DeleteProductView(generics.DestroyAPIView):  #update view
     lookup_field='pk';
     serializer_class=ProductSerializer;
 
+
+
+@api_view(['POST'])
+def post_carpet(request,*args,**kwargs):
+    data={};
+    serializer=CarpetSerializer(data=request.data,context={'request':request});
+    if serializer.is_valid():
+     data=serializer.data
+    else:
+     print('serializer is not valid') 
+    return JsonResponse(data);
+
+
+@api_view (['POST'])                #update api
+def update_carpet(request,pk=None):
+    if pk is not None:
+        instance=Carpets.objects.get(pk=pk);
+        instance.name=request.data['name']
+        instance.year=request.data['year'];
+        instance.save();
+        return JsonResponse(request.data);
+
+
+      
 
      
 
